@@ -5,7 +5,6 @@ import React, {
   useCallback,
   useMemo,
 } from "react";
-import Tooltip from "../components/tooltip.svg";
 import Chart from "chart.js/auto";
 
 const ABMCalculator = () => {
