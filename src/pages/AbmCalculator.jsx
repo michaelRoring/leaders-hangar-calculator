@@ -66,62 +66,62 @@ const ABMCalculator = () => {
   const { totalRevenue, totalCost, profit, dealsClosed, roi } =
     calculatedValues;
 
-  const updateFinancialChart = useCallback(
-    (timeframe, totalRevenue, totalCost) => {
-      const labels = Array.from(
-        { length: timeframe },
-        (_, i) => `Month ${i + 1}`
-      );
-      const monthlyRevenue = totalRevenue / timeframe;
-      const monthlyCost = totalCost / timeframe;
-      const revenueData = [];
-      let cumulativeRevenue = 0;
-      for (let i = 0; i < timeframe; i++) {
-        cumulativeRevenue += monthlyRevenue;
-        revenueData.push(cumulativeRevenue);
-      }
-      const costData = Array.from({ length: timeframe }, () => monthlyCost);
-      const profitData = revenueData.map(
-        (revenue, index) => revenue - monthlyCost * (index + 1)
-      );
-
-      if (chartInstance.current) {
-        chartInstance.current.destroy();
-      }
-
-      const ctx = chartRef.current.getContext("2d");
-      chartInstance.current = new Chart(ctx, {
+    const updateFinancialChart = useCallback(
+      (timeframe, totalRevenue, totalCost) => {
+        const labels = Array.from(
+          { length: timeframe },
+          (_, i) => `Month ${i + 1}`
+        );
+        const monthlyRevenue = totalRevenue / timeframe;
+        const monthlyCost = totalCost / timeframe;
+        const revenueData = [];
+        let cumulativeRevenue = 0;
+        for (let i = 0; i < timeframe; i++) {
+          cumulativeRevenue += monthlyRevenue;
+          revenueData.push(cumulativeRevenue);
+        }
+        const costData = Array.from({ length: timeframe }, () => monthlyCost);
+        const profitData = revenueData.map(
+          (revenue, index) => revenue - monthlyCost * (index + 1)
+        );
+    
+        if (chartInstance.current) {
+          chartInstance.current.destroy();
+        }
+    
+        const ctx = chartRef.current.getContext("2d");
+        chartInstance.current = new Chart(ctx, {
           type: "bar",
-        data: {
-          labels: labels,
-          datasets: [
-            {
-              label: "Cumulative Revenue",
-              data: revenueData,
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Cumulative Revenue",
+                data: revenueData,
                 type: "bar",
-              borderColor: "rgb(255, 193, 7)",
-              fill: false,
-              tension: 0.2,
-            },
-            {
-              label: "Monthly Cost",
-              data: costData,
+                borderColor: "rgb(255, 193, 7)",
+                fill: false,
+                tension: 0.2,
+              },
+              {
+                label: "Monthly Cost",
+                data: costData,
                 type: "line", 
                 borderColor: "rgb(255, 193, 7)",
-              fill: true,
-              backgroundColor: "rgba(108, 117, 125, 0.2)",
-              tension: 0.2,
-            },
-            {
-              label: "Cumulative Profit",
-              data: profitData,
+                fill: true,
+                backgroundColor: "rgba(108, 117, 125, 0.2)",
+                tension: 0.2,
+              },
+              {
+                label: "Cumulative Profit",
+                data: profitData,
                 type: "line", 
-              borderColor: "rgb(75, 192, 192)",
-              fill: false,
-              tension: 0.2,
-            },
-          ],
-        },
+                borderColor: "rgb(75, 192, 192)",
+                fill: false,
+                tension: 0.2,
+              },
+            ],
+          },
         options: {
           responsive: true,
           maintainAspectRatio: false,
@@ -158,6 +158,21 @@ const ABMCalculator = () => {
   const [profitOutput, setProfitOutput] = useState(0);
   const [dealsOutput, setDealsOutput] = useState(0);
   const [roiOutput, setRoiOutput] = useState(0);
+
+  const [currency, setCurrency] = useState("$");
+
+  const currencies = [
+    { value: "$", label: "USD - US Dollar" },
+    { value: "€", label: "EUR - Euro" },
+    { value: "£", label: "GBP - British Pound" },
+    { value: "¥", label: "JPY - Japanese Yen" },
+    { value: "₹", label: "INR - Indian Rupee" },
+    { value: "C$", label: "CAD - Canadian Dollar" },
+    { value: "A$", label: "AUD - Australian Dollar" },
+    { value: "CHF", label: "CHF - Swiss Franc" },
+    { value: "CN¥", label: "CNY - Chinese Yuan" },
+    { value: "KR₩", label: "KRW - South Korean Won" },
+  ];
 
   return (
     <div className=" mx-auto p-6 w-screen ">
@@ -441,7 +456,27 @@ const ABMCalculator = () => {
                 />
               </div>
             </div>
-
+            <div>
+              <div className="mb-2">
+                <label
+                  htmlFor="currency"
+                  className="block text-gray-700 text-sm font-bold mb-2"
+                >
+                  Currency
+                </label>
+                <select
+                  id="currency"
+                  className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+                  value={currency}
+                  onChange={(e) => setCurrency(e.target.value)}
+                >
+                  {currencies.map((currency) => (
+                    <option key={currency.value} value={currency.value}>
+                      {currency.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             <div className="bg-white p-6 rounded-lg shadow-md">
               <div className="bg-blue-800 text-white p-2 rounded-t-lg">
                 <h2 className="text-xl font-bold text-center">
@@ -452,19 +487,19 @@ const ABMCalculator = () => {
                 <div className="flex justify-between mb-2">
                   <div className="text-lg font-semibold">Revenue</div>
                   <div id="revenueOutput" className="text-lg font-bold">
-                    ${revenueOutput}
+                    {currency} {revenueOutput}
                   </div>
                 </div>
                 <div className="flex justify-between mb-2">
                   <div className="text-lg font-semibold">Costs</div>
                   <div id="costOutput" className="text-lg font-bold">
-                    ${costOutput}
+                    {currency} {costOutput}
                   </div>
                 </div>
                 <div className="flex justify-between">
                   <div className="text-lg font-semibold">Profit</div>
                   <div id="profitOutput" className="text-lg font-bold">
-                    ${profitOutput}
+                    {currency} {profitOutput}
                   </div>
                 </div>
                 <div className="flex justify-between mt-2">
@@ -480,6 +515,7 @@ const ABMCalculator = () => {
                   </div>
                 </div>
               </div>
+            </div>
             </div>
           </div>
         </div>
