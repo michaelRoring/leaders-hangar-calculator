@@ -92,13 +92,14 @@ const ABMCalculator = () => {
 
       const ctx = chartRef.current.getContext("2d");
       chartInstance.current = new Chart(ctx, {
-        type: "line",
+          type: "bar",
         data: {
           labels: labels,
           datasets: [
             {
               label: "Cumulative Revenue",
               data: revenueData,
+                type: "bar",
               borderColor: "rgb(255, 193, 7)",
               fill: false,
               tension: 0.2,
@@ -106,7 +107,8 @@ const ABMCalculator = () => {
             {
               label: "Monthly Cost",
               data: costData,
-              borderColor: "rgb(108, 117, 125)",
+                type: "line", 
+                borderColor: "rgb(255, 193, 7)",
               fill: true,
               backgroundColor: "rgba(108, 117, 125, 0.2)",
               tension: 0.2,
@@ -114,6 +116,7 @@ const ABMCalculator = () => {
             {
               label: "Cumulative Profit",
               data: profitData,
+                type: "line", 
               borderColor: "rgb(75, 192, 192)",
               fill: false,
               tension: 0.2,
