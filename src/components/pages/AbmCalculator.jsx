@@ -8,6 +8,7 @@ import React, {
 import Chart from "chart.js/auto";
 import Tooltip from "../atoms/Tooltip";
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 const ABMCalculator = () => {
   const [targetAccounts, setTargetAccounts] = useState(100);
