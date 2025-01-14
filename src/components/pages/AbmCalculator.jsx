@@ -7,6 +7,8 @@ import React, {
 } from "react";
 import Chart from "chart.js/auto";
 import Tooltip from "../atoms/Tooltip";
+import jsPDF from 'jspdf';
+
 
 const ABMCalculator = () => {
   const [targetAccounts, setTargetAccounts] = useState(100);
@@ -174,6 +176,79 @@ const ABMCalculator = () => {
     { value: "CN¥", label: "CNY - Chinese Yuan" },
     { value: "KR₩", label: "KRW - South Korean Won" },
   ];
+
+  const handleDownloadPdf = () => {
+    const chartCanvas = chartRef.current;
+    const chartDataURL = chartCanvas.toDataURL();
+    const pdf = new jsPDF();
+  
+    pdf.setFontSize(18);
+    pdf.setFont("helvetica", "bold");
+    pdf.text('ABM Campaign Forecasting Tool', 10, 10);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Date: ${new Date().toLocaleDateString()}`, 10, 20);
+  
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Target Audience & Reach`, 10, 30);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Target Accounts: ${targetAccounts}`, 15, 40);
+    pdf.text(`Contacts per Account: ${contactsPerAccount}`, 15, 50);
+  
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Outreach & Engagement`, 10, 65);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Outreach Cadence: ${outreachCadence}`, 15, 75);
+    pdf.text(`Timeframe: ${timeframe}`, 15, 85);
+    pdf.text(`Contact Rate: ${contactRate}%`, 15, 95);
+    pdf.text(`Response Rate: ${responseRate}%`, 15, 105);
+    pdf.text(`Meeting Rate: ${meetingRate}%`, 15, 115);
+    pdf.text(`Opportunity Rate: ${opportunityRate}%`, 15, 125);
+    pdf.text(`Close Rate: ${closeRate}%`, 15, 135);
+  
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Time & Cost`, 10, 150);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Cost per Contact: ${currency} ${costPerContact}`, 15, 160);
+    pdf.text(`Cost per Outreach: ${currency} ${costPerOutreach}`, 15, 170);
+  
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Deal Value`, 10, 190);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Average Deal Size: ${currency} ${averageDealSize}`, 15, 200);
+  
+    pdf.setFontSize(14);
+    pdf.setFont("helvetica", "bold");
+    pdf.text(`Projected Profit and Loss Summary`, 10, 220);
+  
+    pdf.setFontSize(12);
+    pdf.setFont("helvetica", "normal");
+    pdf.text(`Total Revenue: ${currency} ${totalRevenue.toFixed(2)}`, 15, 230);
+    pdf.text(`Total Cost: ${currency} ${totalCost.toFixed(2)}`, 15, 240);
+    pdf.text(`Profit: ${currency} ${profit.toFixed(2)}`, 15, 250);
+    pdf.text(`Deals Closed: ${dealsClosed.toFixed(0)}`, 15, 260);
+    pdf.text(`ROI: ${roi.toFixed(2)}%`, 15, 270);
+  
+    pdf.addPage();
+    pdf.addImage(chartDataURL, 'PNG', 10, 10, 190, 60);
+  
+    pdf.save('abm_campaign_forecast.pdf');
+  };
+  
+
 
   return (
     <div className=" mx-auto p-6 w-screen ">
@@ -604,7 +679,7 @@ const ABMCalculator = () => {
                   className="block text-gray-700 text-sm font-bold mb-2"
                 >
                   <Tooltip
-                      text="Cost per Outreach"
+                      text="Average Deal Size"
                       cards={[
                         {
                           title: "Definition",
@@ -634,6 +709,10 @@ const ABMCalculator = () => {
               </div>
             </div>
             <div>
+            <div>
+      {/* ... (rest of your code) */}
+      <button onClick={handleDownloadPdf}>Download PDF</button>
+    </div>
               <div className="mb-2">
                 <label
                   htmlFor="currency"
